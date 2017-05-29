@@ -1,0 +1,6 @@
+{
+  "name": "ShippingEasy Integration",
+  "description": "ShippingEasy integration for Cangaroo",
+  "repository": "https://github.com/misteral/shippingeasy_integration",
+  "keywords": ["cangaroo", "shippingeasy", "integration"]
+}

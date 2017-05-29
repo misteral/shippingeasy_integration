@@ -1,4 +1,4 @@
-require "shippingeasy_integration/version"
+require 'shippingeasy_integration/version'
 
 module ShippingeasyIntegration
   # Your code goes here...
