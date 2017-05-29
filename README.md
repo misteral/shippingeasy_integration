@@ -21,27 +21,71 @@ The following webhooks are implemented:
 
 | Name | Description |
 | :----| :-----------|
-| /send_orders | Send the given orders to Shipping Easy|
+| /send_order | Send the given order to Shipping Easy|
 
-## Installation
+## Installation on rails app
 
-Add this line to your application's Gemfile:
+Add this line to your application's `Gemfile`:
 
 ```ruby
 gem 'shippingeasy_integration'
+```
+
+mount in `routes.rb`:
+```
+mount ShippingeasyIntegration::Server => "/shipping_easy"
 ```
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
 
-    $ gem install shippingeasy_integration
+## Installation as hosted app
+
+```bash
+$ gem install shippingeasy_integration
+$ bundle exec rackup
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+Create cangaroo connection:
+```ruby
+Cangaroo::Connection.create(
+  name: 'shipping_easy',
+  url: 'http://localhost:5000',
+  key: 'secret_key_shipping_easy',
+  token: 'secret_token_shipping_easy'
+)
+```
+
+Create cangaroo job:
+```
+ bundle exec rails g job Cangaroo::ShippingEasyCreateOrder
+```
+
+Change `/jobs/cangaroo/shipping_easy_create_order_job.rb` to:
+```ruby
+module Cangaroo
+  class ShippingEasyCreateOrderJob < Cangaroo::Job
+    connection 'shipping_easy'
+    path '/create_order'
+    parameters(api_key: ENV['SHIPPING_EASY_API_KEY'],
+               api_secret: ENV['SHIPPING_EASY_API_SECRET'])
+
+    def perform?
+      type == 'orders'
+    end
+  end
+end
+
+```
+
+Add as job `cangaroo.rb` in `config/initializer` with:
+```ruby
+Rails.configuration.cangaroo.jobs = [Cangaroo::ShippingEasyCreateOrderJob]
+```
 
 ## Development
 

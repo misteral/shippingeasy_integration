@@ -34,11 +34,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'sinatra', '~> 2.0.0'
-  spec.add_dependency 'tilt'
-  spec.add_dependency 'tilt-jbuilder'
+  spec.add_dependency 'tilt', '~> 2.0.7'
+  spec.add_dependency 'tilt-jbuilder', '~> 0.7.1'
   spec.add_dependency 'endpoint_base', '~> 0.3'
+  spec.add_dependency 'shipping_easy', '~> 0.7.0'
 
   spec.add_development_dependency 'bundler', '~> 1.15'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'rack-test', '~> 0.6.3'
+  spec.add_development_dependency 'byebug', '~> 9.0.6'
 end
