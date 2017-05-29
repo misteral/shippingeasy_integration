@@ -1,6 +1,9 @@
-require 'rubygems'
-require 'bundler/setup'
+# require 'rubygems'
+# require 'bundler/setup'
 
-Bundler.require(:default)
-require './shippingeasy_integration'
-run SippingEasyEndpoint
+# Bundler.require(:default)
+
+$LOAD_PATH.unshift ::File.expand_path(::File.dirname(__FILE__) + '/lib')
+require 'shippingeasy_integration/server'
+
+run ShippingeasyIntegration::Server
