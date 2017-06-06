@@ -21,8 +21,10 @@ class ShippingeasyIntegrationTest < Minitest::Test
   end
 
   def test_respond_ok_for_send_orders
-    post '/create_order', data.to_json
+    ShippingEasy::Resources::Order.stub :create, { order: { id: 'shipping_easy_id'} } do
+      post '/create_order', data.to_json
 
-    assert last_response.ok?
+      assert last_response.ok?
+    end
   end
 end
