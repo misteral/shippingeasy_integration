@@ -28,16 +28,6 @@ class ShippingeasyIntegrationTest < Minitest::Test
     end
   end
 
-  def test_respond_ok_for_update_order
-    ShippingEasy::Resources::Cancellation.stub :create, { order: { external_order_identifier: 'shipping_easy_id'} } do
-      ShippingEasy::Resources::Order.stub :create, { order: { id: 'shipping_easy_id'} } do
-        post '/update_order', data.to_json
-
-        assert last_response.ok?
-      end
-    end
-  end
-
   def test_respond_ok_for_cancel_order
     ShippingEasy::Resources::Cancellation.stub :create, { order: { external_order_identifier: 'shipping_easy_id'} } do
       post '/cancel_order', data.to_json
