@@ -20,6 +20,14 @@ class ShippingeasyIntegrationTest < Minitest::Test
     assert last_response.ok?
   end
 
+  def test_respond_ok_for_callback
+    # payload = load_fixture('callback_payload.json')
+    # binding.pry
+    post '/order_callback', data.to_json
+
+    assert last_response.ok?
+  end
+
   def test_respond_ok_for_create_order
     ShippingEasy::Resources::Order.stub :create, { order: { id: 'shipping_easy_id'} } do
       post '/create_order', data.to_json

@@ -9,13 +9,26 @@ module ShippingeasyIntegration
            level: :trace
 
     before ['/cancel_order', '/create_order'] do
-      logger.info "@config=#{@config}"
-      logger.info "OrderInfo=#{@payload}"
+      logger.info "Config=#{@config}"
+      logger.info "Payload=#{@payload}"
 
       ShippingEasy.configure do |config|
         config.api_key = @config['api_key']
         config.api_secret = @config['api_secret']
       end
+    end
+
+    post '/order_callback' do
+      logger.info "Config=#{@config}"
+      logger.info "Payload=#{@payload}"
+
+      # orders_from_payload = @payload['shipment']['orders']
+      # orders_from_payload.each do |order_payload|
+      #   add_object :order,  number: order_payload['external_order_identifier'],
+      #                       tracking_number: @payload['shipment']['tracking_number'],
+      #                       shipment_cost: @payload['shipment']['shipment_cost']
+      # end
+      result 200, 'Order from shiiping easy is updated'
     end
 
     post '/cancel_order' do
@@ -36,8 +49,9 @@ module ShippingeasyIntegration
 
     post '/create_order' do
       begin
-        create_response = ShippingEasy::Resources::Order.create(store_api_key: @config['store_api_key'],
-                                                         payload: @payload[:shipping_easy])
+        create_response = ShippingEasy::Resources::Order
+                          .create(store_api_key: @config['store_api_key'],
+                                  payload: @payload[:shipping_easy])
         logger.info "Create order response #{create_response}"
 
         result 200, 'Order with is added to Shipping Easy.'
