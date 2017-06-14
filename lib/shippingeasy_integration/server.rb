@@ -22,6 +22,8 @@ module ShippingeasyIntegration
       logger.info "Config=#{@config}"
       logger.info "Payload=#{@payload}"
 
+      puts "Config=#{@config}"
+      puts "Payload=#{@payload}"
       # orders_from_payload = @payload['shipment']['orders']
       # orders_from_payload.each do |order_payload|
       #   add_object :order,  number: order_payload['external_order_identifier'],
