@@ -21,24 +21,43 @@ class ShippingeasyIntegrationTest < Minitest::Test
   end
 
   def test_respond_ok_for_callback
-    # payload = load_fixture('callback_payload.json')
-    # binding.pry
-    post '/order_callback', data.to_json
+    payload = load_fixture('callback_payload.json')
+    post '/order_callback', payload
 
     assert last_response.ok?
+    body = JSON.parse(last_response.body)
+
+    assert body['orders'].size == 1
+  end
+
+  def test_respond_for_update_order
+    payload = load_fixture('sweet_integrator_payload.json')
+    order_find_response = parse_fixture('order_created_payload.json')
+
+    ShippingEasy::Resources::Cancellation.stub :create, { ok: 'ok' } do
+      ShippingEasy::Resources::Order.stub :find, order_find_response do
+        ShippingEasy::Resources::Order.stub :create, order_find_response do
+          post '/update_order', payload
+
+          assert last_response.ok?
+        end
+      end
+    end
   end
 
   def test_respond_ok_for_create_order
+    payload = load_fixture('sweet_integrator_payload.json')
     ShippingEasy::Resources::Order.stub :create, { order: { id: 'shipping_easy_id'} } do
-      post '/create_order', data.to_json
+      post '/create_order', payload
 
       assert last_response.ok?
     end
   end
 
   def test_respond_ok_for_cancel_order
+    payload = load_fixture('sweet_integrator_payload.json')
     ShippingEasy::Resources::Cancellation.stub :create, { order: { external_order_identifier: 'shipping_easy_id'} } do
-      post '/cancel_order', data.to_json
+      post '/cancel_order', payload
 
       assert last_response.ok?
     end
