@@ -1,6 +1,9 @@
-# Shippingeasy Integration
+# Shippingeasy Integration [![CircleCI](https://circleci.com/gh/misteral/shippingeasy_integration.svg?style=svg)](https://circleci.com/gh/misteral/shippingeasy_integration)
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+!!!!!!!!!!!! DOCUMENTATIONS WIP !!!!!!!!!!!!!!!!!
+
 
 This is an integration for use with the
 [Cangaroo](https://github.com/nebulab/cangaroo) open source project.
