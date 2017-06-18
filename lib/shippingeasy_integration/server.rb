@@ -46,7 +46,7 @@ module ShippingeasyIntegration
                             payload: @payload[:shipping_easy])
         # response part
         add_object :order, id: demodify_identyfier(new_order['order']['external_order_identifier']),
-                           sync_id: new_order['order']['id']
+                           sync_id: new_order['order']['id'], sync_type: 'shipping_easy'
         result 200, 'Order with is updated from Shipping Easy'
       rescue => e
         logger.error e.cause
@@ -78,7 +78,7 @@ module ShippingeasyIntegration
                             payload: @payload[:shipping_easy])
 
         add_object :order, id: demodify_identyfier(new_order['order']['external_order_identifier']),
-                           sync_id: new_order['order']['id']
+                           sync_id: new_order['order']['id'], sync_type: 'shipping_easy'
 
         logger.info "Create order response #{new_order}"
 

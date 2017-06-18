@@ -40,8 +40,10 @@ class ShippingeasyIntegrationTest < Minitest::Test
           post '/update_order', payload
 
           parsed_body = JSON.parse(last_response.body)['orders'].first
+
           refute_empty parsed_body['id']
           refute_empty parsed_body['sync_id']
+          assert_equal parsed_body['sync_type'], 'shipping_easy'
           assert last_response.ok?
         end
       end
@@ -54,6 +56,11 @@ class ShippingeasyIntegrationTest < Minitest::Test
     ShippingEasy::Resources::Order.stub :create, order_create_response do
       post '/create_order', payload
 
+      parsed_body = JSON.parse(last_response.body)['orders'].first
+
+      refute_empty parsed_body['id']
+      refute_empty parsed_body['sync_id']
+      assert_equal parsed_body['sync_type'], 'shipping_easy'
       assert last_response.ok?
     end
   end
