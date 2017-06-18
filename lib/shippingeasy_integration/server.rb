@@ -1,13 +1,11 @@
 require 'sinatra'
 require 'endpoint_base'
 require 'shipping_easy'
-require 'sinatra/logger'
+require 'logger'
+# require 'sinatra/logger'
 
 module ShippingeasyIntegration
   class Server < EndpointBase::Sinatra::Base
-    logger filename: "log/shipping_easy_integrator_#{settings.environment}.log",
-           level: :trace
-
     before ['/cancel_order', '/create_order'] do
       logger.info "Config=#{@config}"
       logger.info "Payload=#{@payload}"
@@ -88,6 +86,10 @@ module ShippingeasyIntegration
         logger.error e.backtrace.join("\n")
         result 500, e.message
       end
+    end
+
+    def logger
+      Logger.new(STDOUT)
     end
 
     def modify_indentifier(order_number)
