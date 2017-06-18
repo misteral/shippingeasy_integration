@@ -73,10 +73,14 @@ module ShippingeasyIntegration
 
     post '/create_order' do
       begin
-        create_response = ShippingEasy::Resources::Order
-                          .create(store_api_key: @config['store_api_key'],
-                                  payload: @payload[:shipping_easy])
-        logger.info "Create order response #{create_response}"
+        new_order = ShippingEasy::Resources::Order
+                    .create(store_api_key: @config['store_api_key'],
+                            payload: @payload[:shipping_easy])
+
+        add_object :order, id: demodify_identyfier(new_order['order']['external_order_identifier']),
+                           sync_id: new_order['order']['id']
+
+        logger.info "Create order response #{new_order}"
 
         result 200, 'Order with is added to Shipping Easy.'
       rescue => e
