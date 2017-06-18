@@ -67,7 +67,7 @@ class ShippingeasyIntegrationTest < Minitest::Test
 
   def test_respond_ok_for_cancel_order
     payload = load_fixture('sweet_integrator_payload.json')
-    ShippingEasy::Resources::Cancellation.stub :create, { order: { external_order_identifier: 'shipping_easy_id'} } do
+    ShippingEasy::Resources::Cancellation.stub :create, { ok: 'ok' } do
       post '/cancel_order', payload
 
       assert last_response.ok?
