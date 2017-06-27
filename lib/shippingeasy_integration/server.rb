@@ -24,9 +24,10 @@ module ShippingeasyIntegration
       orders_from_payload.each do |order_payload|
         add_object :order,  id: order_payload['external_order_identifier'],
                             tracking_number: @payload['shipment']['tracking_number'],
-                            shipment_cost: @payload['shipment']['shipment_cost']
+                            shipment_cost: @payload['shipment']['shipment_cost'],
+                            sync_type: 'shipping_easy'
       end
-      result 200, 'Order from callback'
+      result 200, 'Callback from shipping easy'
     end
 
     post '/update_order' do
