@@ -19,15 +19,20 @@ module ShippingeasyIntegration
     post '/order_callback' do
       logger.info "Config=#{@config}"
       logger.info "Payload=#{@payload}"
-
-      orders_from_payload = @payload['shipment']['orders']
-      orders_from_payload.each do |order_payload|
-        add_object :order,  id: order_payload['external_order_identifier'],
-                            tracking_number: @payload['shipment']['tracking_number'],
-                            shipment_cost: @payload['shipment']['shipment_cost'],
-                            sync_type: 'shipping_easy'
+      begin
+        orders_from_payload = @payload['shipment']['orders']
+        orders_from_payload.each do |order_payload|
+          add_object :order,  id: order_payload['external_order_identifier'],
+                              tracking_number: @payload['shipment']['tracking_number'],
+                              shipment_cost: @payload['shipment']['shipment_cost'],
+                              sync_type: 'shipping_easy'
+        end
+        result 200, 'Callback from shipping easy'
+      rescue => e
+        logger.error e.cause
+        logger.error e.backtrace.join("\n")
+        result 500, e.message
       end
-      result 200, 'Callback from shipping easy'
     end
 
     post '/update_order' do
