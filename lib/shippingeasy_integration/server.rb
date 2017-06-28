@@ -21,7 +21,7 @@ module ShippingeasyIntegration
       logger.info "Config=#{@config}"
       logger.info "Payload=#{@payload}"
       begin
-        shipping_cost = @payload['shipment']['shipment_cost'] / 100
+        shipping_cost = @payload['shipment']['shipment_cost'].to_f / 100
         orders_from_payload = @payload['shipment']['orders']
         orders_from_payload.each do |order_payload|
           add_object :order,  id: order_payload['external_order_identifier'],
