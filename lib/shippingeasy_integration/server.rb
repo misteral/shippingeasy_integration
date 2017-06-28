@@ -3,6 +3,7 @@ require 'endpoint_base'
 require 'shipping_easy'
 require 'logger'
 # require 'sinatra/logger'
+require 'httparty'
 
 module ShippingeasyIntegration
   class Server < EndpointBase::Sinatra::Base
@@ -27,6 +28,9 @@ module ShippingeasyIntegration
                               shipment_cost: @payload['shipment']['shipment_cost'],
                               sync_type: 'shipping_easy'
         end
+
+        push(@objects.to_json)
+
         result 200, 'Callback from shipping easy'
       rescue => e
         logger.error e.cause
@@ -133,5 +137,28 @@ module ShippingeasyIntegration
     def demodify_identyfier(modified_number)
       modified_number.partition('_').first
     end
+
+    def push(json_payload)
+      res = HTTParty.post(
+        ENV['CANGAROO_ENDPOINT'],
+        body: json_payload,
+        headers: {
+          'Content-Type'       => 'application/json',
+          'X-Hub-Store'        => ENV['CANGAROO_SECRET_KEY'],
+          'X-Hub-Access-Token' => ENV['CANGAROO_SECRET_TOKEN'],
+          'X-Hub-Timestamp'    => Time.now.utc.to_i.to_s
+        }
+      )
+
+      validate(res)
+    end
+
+    def validate(res)
+      return if res.code == 202
+      raise PushApiError,
+        "Push not successful. Returned response code #{res.code} and message: #{res.body}"
+    end
   end
+
+  class PushApiError < StandardError; end
 end

@@ -22,7 +22,12 @@ class ShippingeasyIntegrationTest < Minitest::Test
 
   def test_respond_ok_for_callback
     payload = load_fixture('callback_payload.json')
-    post '/order_callback', payload
+    mock = Minitest::Mock.new
+    def mock.code; 202; end
+
+    HTTParty.stub :post, mock do
+      post '/order_callback', payload
+    end
 
     assert last_response.ok?
     body = JSON.parse(last_response.body)
@@ -67,10 +72,14 @@ class ShippingeasyIntegrationTest < Minitest::Test
 
   def test_respond_ok_for_cancel_order
     payload = load_fixture('sweet_integrator_payload.json')
-    ShippingEasy::Resources::Cancellation.stub :create, { ok: 'ok' } do
-      post '/cancel_order', payload
+    ShippingEasy::Resources::Order
+      .stub :find, 'order' => { 'external_order_identifier' => '3' } do
 
-      assert last_response.ok?
+      ShippingEasy::Resources::Cancellation.stub :create, ok: 'ok' do
+        post '/cancel_order', payload
+
+        assert last_response.ok?
+      end
     end
   end
 end

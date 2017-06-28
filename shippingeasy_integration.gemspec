@@ -39,6 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'endpoint_base', '~> 0.3'
   spec.add_dependency 'shipping_easy', '~> 0.7.0'
   spec.add_dependency 'sinatra-logger', '~> 0.3.2'
+  spec.add_dependency 'httparty'
 
   spec.add_development_dependency 'bundler', '~> 1.15'
   spec.add_development_dependency 'rake', '~> 10.0'
