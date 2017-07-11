@@ -39,17 +39,17 @@ class ShippingeasyIntegrationTest < Minitest::Test
     payload = load_fixture('sweet_integrator_payload.json')
     order_find_response = parse_fixture('order_created_payload.json')
 
-    ShippingEasy::Resources::Cancellation.stub :create, { ok: 'ok' } do
+    ShippingEasy::Resources::Cancellation.stub :create, ok: 'ok' do
       ShippingEasy::Resources::Order.stub :find, order_find_response do
         ShippingEasy::Resources::Order.stub :create, order_find_response do
           post '/update_order', payload
 
+          assert last_response.ok?
           parsed_body = JSON.parse(last_response.body)['orders'].first
 
           refute_empty parsed_body['id']
           refute_empty parsed_body['sync_id']
           assert_equal parsed_body['sync_type'], 'shipping_easy'
-          assert last_response.ok?
         end
       end
     end
@@ -61,12 +61,13 @@ class ShippingeasyIntegrationTest < Minitest::Test
     ShippingEasy::Resources::Order.stub :create, order_create_response do
       post '/create_order', payload
 
+      assert last_response.ok?
       parsed_body = JSON.parse(last_response.body)['orders'].first
 
       refute_empty parsed_body['id']
       refute_empty parsed_body['sync_id']
       assert_equal parsed_body['sync_type'], 'shipping_easy'
-      assert last_response.ok?
+      assert_equal parsed_body['alternate_order_id'], 'R1-RR'
     end
   end
 
