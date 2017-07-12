@@ -25,7 +25,6 @@ module ShippingeasyIntegration
         orders_from_payload = @payload['shipment']['orders']
         orders_from_payload.each do |order_payload|
           add_object :order,  id: alternate_order_id(order_payload),
-                              id_wo_vendor: order_payload['external_order_identifier'],
                               tracking_number: @payload['shipment']['tracking_number'],
                               shipment_cost: shipping_cost,
                               sync_type: 'shipping_easy'
@@ -64,7 +63,7 @@ module ShippingeasyIntegration
                             payload: @payload[:shipping_easy])
 
         # response part
-        add_object :order, id: demodify_identyfier(new_order['order']['external_order_identifier']),
+        add_object :order, id: alternate_order_id(new_order['order']),
                            sync_id: new_order['order']['id'], sync_type: 'shipping_easy'
         result 200, 'Order with is updated from Shipping Easy'
       rescue => e
@@ -113,8 +112,7 @@ module ShippingeasyIntegration
                     .create(store_api_key: @config['store_api_key'],
                             payload: @payload[:shipping_easy])
 
-        add_object :order, id: alternate_order_id(new_order),
-                           id_wo_vendor: demodify_identyfier(new_order['order']['external_order_identifier']),
+        add_object :order, id: alternate_order_id(new_order['order']),
                            sync_id: new_order['order']['id'], sync_type: 'shipping_easy'
 
         logger.info "Create order response #{new_order}"

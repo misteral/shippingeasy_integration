@@ -30,26 +30,30 @@ class ShippingeasyIntegrationTest < Minitest::Test
     end
 
     assert last_response.ok?
-    body = JSON.parse(last_response.body)
+    parsed_body = JSON.parse(last_response.body)
+    order_body = parsed_body['orders'].first
 
-    assert body['orders'].size == 1
+    assert parsed_body['orders'].size == 1
+    assert_equal order_body['id'], 'R1-R572547556'
   end
 
   def test_respond_for_update_order
     payload = load_fixture('sweet_integrator_payload.json')
-    order_find_response = parse_fixture('order_created_payload.json')
+    order_find_response = parse_fixture('order_find_response.json')
+    order_create_response = parse_fixture('order_create_response.json')
 
     ShippingEasy::Resources::Cancellation.stub :create, ok: 'ok' do
       ShippingEasy::Resources::Order.stub :find, order_find_response do
-        ShippingEasy::Resources::Order.stub :create, order_find_response do
+        ShippingEasy::Resources::Order.stub :create, order_create_response do
           post '/update_order', payload
 
           assert last_response.ok?
           parsed_body = JSON.parse(last_response.body)['orders'].first
 
-          refute_empty parsed_body['id']
-          refute_empty parsed_body['sync_id']
+          refute_nil parsed_body['id']
+          refute_nil parsed_body['sync_id']
           assert_equal parsed_body['sync_type'], 'shipping_easy'
+          assert_equal parsed_body['id'], 'R1-R572547556'
         end
       end
     end
@@ -57,17 +61,17 @@ class ShippingeasyIntegrationTest < Minitest::Test
 
   def test_respond_ok_for_create_order
     payload = load_fixture('sweet_integrator_payload.json')
-    order_create_response = parse_fixture('order_created_payload.json')
+    order_create_response = parse_fixture('order_create_response.json')
     ShippingEasy::Resources::Order.stub :create, order_create_response do
       post '/create_order', payload
 
       assert last_response.ok?
       parsed_body = JSON.parse(last_response.body)['orders'].first
 
-      refute_empty parsed_body['id']
-      refute_empty parsed_body['sync_id']
+      refute_nil parsed_body['id']
+      refute_nil parsed_body['sync_id']
       assert_equal parsed_body['sync_type'], 'shipping_easy'
-      assert_equal parsed_body['alternate_order_id'], 'R1-RR'
+      assert_equal parsed_body['id'], 'R1-R572547556'
     end
   end
 
