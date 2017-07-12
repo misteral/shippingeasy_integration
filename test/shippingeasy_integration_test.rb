@@ -7,10 +7,6 @@ class ShippingeasyIntegrationTest < Minitest::Test
     ShippingeasyIntegration::Server
   end
 
-  def data
-    { 'shipping_easy' => {"order"=>{"external_order_identifier"=>"R381421316", "ordered_at"=>"2017-06-06T11:15:48Z", "total_including_tax"=>29.96, "recipients"=>[{"company"=>"", "first_name"=>"first", "last_name"=>"last", "address"=>"street", "address2"=>"street2", "city"=>"New York", "state"=>"NY", "country"=>"US", "postal_code"=>"10003", "phone_number"=>"phone", "email"=>"spiderman@sweetist.co", "line_items"=>[{"item_name"=>"Smoked Lime & Ginger Trout", "sku"=>"13919910", "quantity"=>4, "total_excluding_tax"=>5.74, "unit_price"=>5.74}]}]}} }
-  end
-
   def test_that_it_has_a_version_number
     refute_nil ::ShippingeasyIntegration::VERSION
   end
