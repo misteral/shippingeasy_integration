@@ -7,9 +7,11 @@ require 'httparty'
 
 module ShippingeasyIntegration
   class Server < EndpointBase::Sinatra::Base
+    SYNC_TYPE = 'shipping_easy'.freeze
+
     before ['/cancel_order', '/create_order', '/update_order'] do
-      logger.info "Config=#{@config}"
-      logger.info "Payload=#{@payload}"
+      # logger.info "Config=#{@config}"
+      # logger.info "Payload=#{@payload}"
 
       ShippingEasy.configure do |config|
         config.api_key = @config['api_key']
@@ -18,8 +20,8 @@ module ShippingeasyIntegration
     end
 
     post '/order_callback' do
-      logger.info "Config=#{@config}"
-      logger.info "Payload=#{@payload}"
+      # logger.info "Config=#{@config}"
+      # logger.info "Payload=#{@payload}"
       begin
         shipping_cost = @payload['shipment']['shipment_cost'].to_f / 100
         orders_from_payload = @payload['shipment']['orders']
@@ -27,7 +29,7 @@ module ShippingeasyIntegration
           add_object :order,  id: alternate_order_id(order_payload),
                               tracking_number: @payload['shipment']['tracking_number'],
                               shipment_cost: shipping_cost,
-                              sync_type: 'shipping_easy'
+                              sync_type: SYNC_TYPE
         end
 
         push(@objects.to_json)
@@ -63,9 +65,15 @@ module ShippingeasyIntegration
                             payload: @payload[:shipping_easy])
 
         # response part
-        add_object :order, id: alternate_order_id(new_order['order']),
-                           sync_id: new_order['order']['id'], sync_type: 'shipping_easy'
-        result 200, 'Order with is updated from Shipping Easy'
+        order_number = alternate_order_id(new_order['order'])
+        add_object :order, id: order_number,
+                           sync_id: new_order['order']['id'],
+                           sync_type: SYNC_TYPE
+
+        add_logs_object id: order_number,
+                        message: "Order with #{order_number} is updated \
+in Shipping Easy."
+        result 200
       rescue => e
         logger.error e.cause
         logger.error e.backtrace.join("\n")
@@ -97,8 +105,12 @@ module ShippingeasyIntegration
               @payload[:shipping_easy][:order][:external_order_identifier])
         end
 
-        logger.info "Response from Shipping Easy = #{response}"
-        result 200, 'Order with is canceled from Shipping Easy.'
+        order_number = alternate_order_id(response['order'])
+        add_logs_object id: order_number,
+                        message: "Order with #{order_number} is canceled \
+in Shipping Easy."
+
+        result 200
       rescue => e
         logger.error e.cause
         logger.error e.backtrace.join("\n")
@@ -112,12 +124,16 @@ module ShippingeasyIntegration
                     .create(store_api_key: @config['store_api_key'],
                             payload: @payload[:shipping_easy])
 
-        add_object :order, id: alternate_order_id(new_order['order']),
-                           sync_id: new_order['order']['id'], sync_type: 'shipping_easy'
+        order_number = alternate_order_id(new_order['order'])
+        add_object :order, id: order_number,
+                           sync_id: new_order['order']['id'],
+                           sync_type: SYNC_TYPE
 
-        logger.info "Create order response #{new_order}"
+        add_logs_object id: order_number,
+                        message: "Order with #{order_number} is added \
+to Shipping Easy."
 
-        result 200, 'Order with is added to Shipping Easy.'
+        result 200
       rescue => e
         logger.error e.cause
         logger.error e.backtrace.join("\n")
@@ -152,6 +168,14 @@ module ShippingeasyIntegration
       )
 
       validate(res)
+    end
+
+    def add_logs_object(id:, message:, level: 'done', type: 'orders')
+      add_object :log, id: id,
+                       sync_type: SYNC_TYPE,
+                       level: level,
+                       message: message,
+                       type: type
     end
 
     def alternate_order_id(payload)
