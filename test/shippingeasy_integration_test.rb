@@ -44,12 +44,19 @@ class ShippingeasyIntegrationTest < Minitest::Test
           post '/update_order', payload
 
           assert last_response.ok?
-          parsed_body = JSON.parse(last_response.body)['orders'].first
+          parsed_order = JSON.parse(last_response.body)['orders'].first
+          parsed_log = JSON.parse(last_response.body)['logs'].first
 
-          refute_nil parsed_body['id']
-          refute_nil parsed_body['sync_id']
-          assert_equal parsed_body['sync_type'], 'shipping_easy'
-          assert_equal parsed_body['id'], 'R1-R572547556'
+          refute_nil parsed_order['id']
+          refute_nil parsed_order['sync_id']
+          assert_equal parsed_order['sync_type'], 'shipping_easy'
+          assert_equal parsed_order['id'], 'R1-R572547556'
+
+          refute_nil parsed_log['id']
+          refute_nil parsed_log['type']
+          assert_equal parsed_log['sync_type'], 'shipping_easy'
+          refute_nil parsed_log['level']
+          refute_nil parsed_log['message']
         end
       end
     end
@@ -73,12 +80,12 @@ class ShippingeasyIntegrationTest < Minitest::Test
 
   def test_respond_ok_for_cancel_order
     payload = load_fixture('sweet_integrator_payload.json')
+    order_cancel_response = parse_fixture('order_create_response.json')
     ShippingEasy::Resources::Order
       .stub :find, 'order' => { 'external_order_identifier' => '3' } do
 
-      ShippingEasy::Resources::Cancellation.stub :create, ok: 'ok' do
+      ShippingEasy::Resources::Cancellation.stub :create, order_cancel_response do
         post '/cancel_order', payload
-
         assert last_response.ok?
       end
     end
