@@ -12,7 +12,7 @@ module ShippingeasyIntegration
     before ['/cancel_order', '/create_order', '/update_order'] do
       # logger.info "Config=#{@config}"
       # logger.info "Payload=#{@payload}"
-
+      @data = Service.transform(@payload[:order])
       ShippingEasy.configure do |config|
         config.api_key = @config['api_key']
         config.api_secret = @config['api_secret']
@@ -48,7 +48,7 @@ module ShippingeasyIntegration
         order =
           ShippingEasy::Resources::Order
           .find(
-            id: @payload[:shipping_easy][:order][:sync_id]
+            id: @config[:sync_id]
           )
 
         # cancel order
@@ -59,10 +59,10 @@ module ShippingeasyIntegration
 
         # create order
         new_identifier = modify_indentifier(order['order']['external_order_identifier'])
-        @payload[:shipping_easy][:order][:external_order_identifier] = new_identifier
+        @data[:shipping_easy][:order][:external_order_identifier] = new_identifier
         new_order = ShippingEasy::Resources::Order
                     .create(store_api_key: @config['store_api_key'],
-                            payload: @payload[:shipping_easy])
+                            payload: @data[:shipping_easy])
 
         # response part
         order_number = alternate_order_id(new_order['order'])
@@ -77,18 +77,18 @@ in Shipping Easy."
       rescue => e
         logger.error e.cause
         logger.error e.backtrace.join("\n")
-        result 500, e.message
+        result 500, response_for_error(e)
       end
     end
 
     post '/cancel_order' do
       begin
-        if @payload[:shipping_easy][:order][:sync_id]
+        if @config[:sync_id]
           # find order
           order =
             ShippingEasy::Resources::Order
             .find(
-              id: @payload[:shipping_easy][:order][:sync_id]
+              id: @config[:sync_id]
             )
 
           # cancel order
@@ -102,7 +102,7 @@ in Shipping Easy."
             ShippingEasy::Resources::Cancellation
             .create(store_api_key: @config['store_api_key'],
                     external_order_identifier: \
-              @payload[:shipping_easy][:order][:external_order_identifier])
+              @data[:shipping_easy][:order][:external_order_identifier])
         end
 
         order_number = alternate_order_id(response['order'])
@@ -114,7 +114,7 @@ in Shipping Easy."
       rescue => e
         logger.error e.cause
         logger.error e.backtrace.join("\n")
-        result 500, e.message
+        result 500, response_for_error(e)
       end
     end
 
@@ -122,7 +122,7 @@ in Shipping Easy."
       begin
         new_order = ShippingEasy::Resources::Order
                     .create(store_api_key: @config['store_api_key'],
-                            payload: @payload[:shipping_easy])
+                            payload: @data[:shipping_easy])
 
         order_number = alternate_order_id(new_order['order'])
         add_object :order, id: order_number,
@@ -137,7 +137,7 @@ to Shipping Easy."
       rescue => e
         logger.error e.cause
         logger.error e.backtrace.join("\n")
-        result 500, e.message
+        result 500, response_for_error(e)
       end
     end
 
@@ -170,12 +170,33 @@ to Shipping Easy."
       validate(res)
     end
 
+    def add_integration_params
+      add_parameter 'sync_action', sync_action
+      add_parameter 'sync_type', SYNC_TYPE
+      add_parameter 'vendor', vendor
+    end
+
+    def sync_action
+      @config['sync_action']
+    end
+
+    def vendor
+      @config['vendor']
+    end
+
+    def response_for_error(error)
+      {
+        message: error.message,
+        backtrace: error.backtrace[0..15]
+      }
+    end
+
     def add_logs_object(id:, message:, level: 'done', type: 'orders')
       add_object :log, id: id,
-                       sync_type: SYNC_TYPE,
                        level: level,
                        message: message,
                        type: type
+      add_integration_params
     end
 
     def alternate_order_id(payload)
@@ -185,7 +206,7 @@ to Shipping Easy."
     def validate(res)
       return if res.code == 202
       raise PushApiError,
-        "Push not successful. Returned response code #{res.code} and message: #{res.body}"
+        'Push not successful. Returned response code #{res.code} and message: #{res.body}'
     end
   end
 

@@ -1,34 +1,135 @@
 {
-  "shipping_easy": {
-    "order": {
-      "external_order_identifier": "R381421316",
-      "ordered_at": "2017-06-06T11:15:48Z",
-      "total_including_tax": 29.96,
-      "sync_id": "344443",
-      "recipients": [
-        {
-          "company": "",
-          "first_name": "first",
-          "last_name": "last",
-          "address": "street",
-          "address2": "street2",
-          "city": "New York",
-          "state": "NY",
-          "country": "US",
-          "postal_code": "10003",
-          "phone_number": "phone",
-          "email": "spiderman@sweetist.co",
-          "line_items": [
-            {
-              "item_name": "Smoked Lime & Ginger Trout",
-              "sku": "13919910",
-              "quantity": 4,
-              "total_excluding_tax": 5.74,
-              "unit_price": 5.74
-            }
-          ]
-        }
-      ]
+  "request_id": "4c5a3109-06d3-4190-9cb2-2d2a5c83c957",
+  "parameters": {
+    "api_key": "23c076803f38f0ec9e423715c66f8635",
+    "api_secret": "116141b5275e315bdac7eb514ddffe1c8bddd62be130f86ed8169c2187aa732b",
+    "store_api_key": "92138fa552f501ec52454d34ae553863",
+    "sync_type": "shipping_easy",
+    "sync_action": 17449,
+    "vendor": 3
+  },
+  "order": {
+    "id": "R3-IN-1001243",
+    "status": "approved",
+    "channel": "shopify",
+    "email": "ed@sweetist.com",
+    "currency": "USD",
+    "placed_on": "2018-01-12T09:03:40Z",
+    "updated_at": "2018-01-14T14:10:56Z",
+    "totals": {
+      "item": 3080,
+      "adjustment": 273.35,
+      "tax": 273.35,
+      "shipping": 0,
+      "payment": 0,
+      "order": 3353.35
+    },
+    "weight_in_oz": 0,
+    "adjustments": [
+      {
+        "name": "discount",
+        "value": 0
+      },
+      {
+        "name": "tax",
+        "value": 273.35
+      },
+      {
+        "name": "shipping",
+        "value": 0
+      }
+    ],
+    "guest_token": "9EAKVSfgBWNKlUzHsAe9fQ",
+    "shipping_instructions": "          \r\n          \r\n          \r\n          ",
+    "delivery_date": "01/12/2018",
+    "vendor_id": 3,
+    "display_number": "IN-1001243",
+    "line_items": [
+      {
+        "id": 28863,
+        "product_id": "Sku - e",
+        "name": "Test Tsheet product",
+        "quantity": 28,
+        "price": 100,
+        "weight_in_ounces": 0
+      },
+      {
+        "id": 28864,
+        "product_id": "sku-tt",
+        "name": "Test product from Shopify",
+        "quantity": 28,
+        "price": 10,
+        "weight_in_ounces": 0
+      }
+    ],
+    "payments": [],
+    "promotions": [],
+    "shipments": [
+      {
+        "id": "H23164743738",
+        "order_id": "R3-IN-1001243",
+        "email": "ed@sweetist.com",
+        "cost": 0,
+        "status": "ready",
+        "stock_location": "Ed's Euro Bake - Default",
+        "shipping_method": null,
+        "tracking": "",
+        "placed_on": "2018-01-12T09:03:40Z",
+        "shipped_at": null,
+        "totals": {
+          "item": 3080,
+          "adjustment": 273.35,
+          "tax": 0,
+          "shipping": 0,
+          "payment": 0,
+          "order": 3353.35
+        },
+        "updated_at": "2018-01-14T14:10:56Z",
+        "channel": "shopify",
+        "items": [
+          {
+            "product_id": "sku-tt",
+            "name": "Test product from Shopify",
+            "quantity": "28",
+            "price": 10
+          },
+          {
+            "product_id": "Sku - e",
+            "name": "Test Tsheet product",
+            "quantity": "28",
+            "price": 100
+          }
+        ],
+        "shipping_method_code": null
+      }
+    ],
+    "shipping_address": {
+      "firstname": null,
+      "lastname": null,
+      "address1": "555 1000th St, New York, NY",
+      "address2": "AA",
+      "zipcode": "10001",
+      "city": "New York",
+      "state": "NY",
+      "country": "US",
+      "phone": "",
+      "company": null
+    },
+    "billing_address": {
+      "firstname": null,
+      "lastname": null,
+      "address1": "555 1000th St, New York, NY",
+      "address2": "AA",
+      "zipcode": "10001",
+      "city": "New York",
+      "state": "NY",
+      "country": "US",
+      "phone": "",
+      "company": null
+    },
+    "account": {
+      "fully_qualified_name": "Ed Chang",
+      "email": "ed@sweetist.com"
     }
   }
 }
