@@ -31,8 +31,8 @@ module ShippingeasyIntegration
                               shipment_cost: shipping_cost,
                               sync_type: SYNC_TYPE
         end
-
-        push(@objects.to_json)
+        add_integration_params
+        push(@objects.merge('parameters' => @parameters).to_json)
 
         result 200, 'Callback from shipping easy'
       rescue => e
