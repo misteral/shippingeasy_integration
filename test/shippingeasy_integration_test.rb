@@ -28,10 +28,11 @@ class ShippingeasyIntegrationTest < Minitest::Test
     assert last_response.ok?
 
     parsed_body = JSON.parse(last_response.body)
-    order_body = parsed_body['orders'].first
+    shipment_body = parsed_body['shipments'].first
 
-    assert parsed_body['orders'].size == 1
-    assert_equal order_body['id'], 'R1-R572547556'
+    assert parsed_body['shipments'].size == 1
+    assert_equal shipment_body['order_id'], 'R1-R572547556'
+    assert_equal shipment_body['status'], 'complete'
   end
 
   def test_respond_for_update_order

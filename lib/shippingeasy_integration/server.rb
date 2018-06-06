@@ -26,10 +26,12 @@ module ShippingeasyIntegration
         shipping_cost = @payload['shipment']['shipment_cost'].to_f / 100
         orders_from_payload = @payload['shipment']['orders']
         orders_from_payload.each do |order_payload|
-          add_object :order,  id: alternate_order_id(order_payload),
-                              tracking_number: @payload['shipment']['tracking_number'],
-                              shipment_cost: shipping_cost,
-                              sync_type: SYNC_TYPE
+          add_object :shipment,
+                     id: @payload['shipment']['id'],
+                     status: shipping_status,
+                     order_id: alternate_order_id(order_payload),
+                     tracking: @payload['shipment']['tracking_number'],
+                     cost: shipping_cost
         end
         add_integration_params
         push(@objects.merge('parameters' => @parameters).to_json)
@@ -143,6 +145,12 @@ to Shipping Easy."
 
     def logger
       Logger.new(STDOUT)
+    end
+
+    def shipping_status
+      shipping_easy_state = @payload['shipment']['workflow_state']
+      return 'complete' if shipping_easy_state == 'label_ready'
+      'unknown'
     end
 
     def modify_indentifier(order_number)
