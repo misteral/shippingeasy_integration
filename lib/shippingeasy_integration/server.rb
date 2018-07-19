@@ -192,9 +192,15 @@ to Shipping Easy."
       @config['vendor']
     end
 
+    def parsed_message(message)
+      JSON.parse(message)['errors'].map { |m| m['message'] }.join(' ')
+    rescue
+      message
+    end
+
     def response_for_error(error)
       {
-        message: error.message,
+        message: parsed_message(error.message),
         backtrace: error.backtrace[0..15]
       }
     end
