@@ -26,11 +26,13 @@ class ShippingeasyIntegrationTest < Minitest::Test
     end
 
     assert last_response.ok?
-    parsed_body = JSON.parse(last_response.body)
-    order_body = parsed_body['orders'].first
 
-    assert parsed_body['orders'].size == 1
-    assert_equal order_body['id'], 'R1-R572547556'
+    parsed_body = JSON.parse(last_response.body)
+    shipment_body = parsed_body['shipments'].first
+
+    assert parsed_body['shipments'].size == 1
+    assert_equal shipment_body['order_id'], 'R1-R572547556'
+    assert_equal shipment_body['status'], 'complete'
   end
 
   def test_respond_for_update_order
@@ -44,6 +46,7 @@ class ShippingeasyIntegrationTest < Minitest::Test
           post '/update_order', payload
 
           assert last_response.ok?
+          check_params(last_response.body)
           parsed_order = JSON.parse(last_response.body)['orders'].first
           parsed_log = JSON.parse(last_response.body)['logs'].first
 
@@ -54,7 +57,6 @@ class ShippingeasyIntegrationTest < Minitest::Test
 
           refute_nil parsed_log['id']
           refute_nil parsed_log['type']
-          assert_equal parsed_log['sync_type'], 'shipping_easy'
           refute_nil parsed_log['level']
           refute_nil parsed_log['message']
         end
@@ -71,6 +73,7 @@ class ShippingeasyIntegrationTest < Minitest::Test
       assert last_response.ok?
       parsed_body = JSON.parse(last_response.body)['orders'].first
 
+      check_params(last_response.body)
       refute_nil parsed_body['id']
       refute_nil parsed_body['sync_id']
       assert_equal parsed_body['sync_type'], 'shipping_easy'
@@ -87,7 +90,15 @@ class ShippingeasyIntegrationTest < Minitest::Test
       ShippingEasy::Resources::Cancellation.stub :create, order_cancel_response do
         post '/cancel_order', payload
         assert last_response.ok?
+        check_params(last_response.body)
       end
     end
+  end
+
+  def check_params(payload)
+    params = JSON.parse(payload)['parameters']
+    refute_nil params.dig 'sync_action'
+    refute_nil params.dig 'sync_type'
+    refute_nil params.dig 'vendor'
   end
 end

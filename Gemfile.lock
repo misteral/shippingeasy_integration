@@ -10,7 +10,7 @@ GIT
 PATH
   remote: .
   specs:
-    shippingeasy_integration (0.1.1)
+    shippingeasy_integration (0.1.2)
       endpoint_base (~> 0.3)
       httparty
       shipping_easy (~> 0.7.0)
@@ -33,13 +33,16 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.11.0.1)
       faraday (>= 0.7.4, < 1.0)
-    httparty (0.14.0)
+    httparty (0.15.5)
       multi_xml (>= 0.5.2)
     i18n (0.8.1)
     jbuilder (2.6.4)
       activesupport (>= 3.0.0)
       multi_json (>= 1.2)
     json (1.8.6)
+    m (1.5.1)
+      method_source (>= 0.6.7)
+      rake (>= 0.9.2.2)
     method_source (0.8.2)
     minitest (5.10.2)
     multi_json (1.12.1)
@@ -86,6 +89,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.15)
   endpoint_base!
+  m
   minitest (~> 5.0)
   pry (~> 0.10.4)
   rack-test
@@ -98,4 +102,4 @@ DEPENDENCIES
   tilt-jbuilder
 
 BUNDLED WITH
-   1.15.1
+   1.15.4

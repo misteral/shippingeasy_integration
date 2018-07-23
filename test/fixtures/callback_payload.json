@@ -4,6 +4,7 @@
     "tracking_number": "8888888888888888888888888",
     "carrier_key": "USPS",
     "carrier_service_key": "First",
+    "workflow_state": "label_ready",
     "shipment_cost": 98,
     "weight_in_ounces": "1.0",
     "orders": [
